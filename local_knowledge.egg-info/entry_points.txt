@@ -1,0 +1,2 @@
+[console_scripts]
+local-knowledge = local_knowledge.__main__:main

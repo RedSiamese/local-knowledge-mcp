@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "knowledge": {
+      "command": "python",
+      "args": [
+        "-m",
+        "local_knowledge"
+      ],
+      "disabled": false,
+      "alwaysAllow": []
+    }
+  }
+}

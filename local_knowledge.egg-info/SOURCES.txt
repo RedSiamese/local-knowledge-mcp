@@ -1,0 +1,15 @@
+LICENSE
+MANIFEST.in
+README.md
+setup.py
+local_knowledge/__init__.py
+local_knowledge/__main__.py
+local_knowledge/knowledge_service.py
+local_knowledge/mcp_service.py
+local_knowledge.egg-info/PKG-INFO
+local_knowledge.egg-info/SOURCES.txt
+local_knowledge.egg-info/dependency_links.txt
+local_knowledge.egg-info/entry_points.txt
+local_knowledge.egg-info/not-zip-safe
+local_knowledge.egg-info/requires.txt
+local_knowledge.egg-info/top_level.txt
