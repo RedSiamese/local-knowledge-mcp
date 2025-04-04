@@ -59,7 +59,7 @@ pip install ./dist/local_knowledge-0.1.0-py3-none-any.whl
 
 ## 机制
 
-## 文件结构
+### 文件结构
 
 知识库默认保存在工作目录的`.knowledge`文件中，以JSON格式存储。
 
