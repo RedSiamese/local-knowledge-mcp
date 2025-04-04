@@ -1,0 +1,7 @@
+include README.md
+include LICENSE
+recursive-include local_knowledge *.py
+recursive-include local_knowledge *.json
+recursive-include local_knowledge *.txt
+recursive-include local_knowledge *.md
+recursive-include local_knowledge *.yaml *.yml
