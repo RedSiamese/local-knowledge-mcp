@@ -1,196 +1,157 @@
-# 本地知识服务 - 使用说明
+# Local Knowledge
+
+Local Knowledge是一个基于Model Context Protocol (MCP)的服务，用于管理和提供本地知识库。
 
 ## 简介
 
-本服务用于保存和向大模型提供本地知识。知识以JSON格式存储，并通过MCP服务提供接口访问。
+本服务允许进行**有项目区分地****有作用域地**保存、更新和查询本地知识，将不同的知识作用于不同的工作区，以便大语言模型能够访问与当前工作区有关的知识。知识以JSON格式存储，并支持多种内容获取方式：直接内容、文件读取和脚本动态生成。
 
-## 安装依赖
+## 功能
 
-```bash
-pip install mcp
-```
+- 列出所有知识描述
+- 根据索引查询知识详情
+- 添加新知识
+- 更新已有知识
 
-## 启动服务
-
-```bash
-# 以HTTP服务器模式启动
-python -m local_knowledge --port 8787 --file knowledge.json
-
-# 以标准输入输出模式启动（用于与其他MCP服务集成）
-python -m local_knowledge --stdio --file knowledge.json
-```
-
-可以通过环境变量自定义配置：
-- `MCP_PORT`: 服务端口号（默认8787）
-- `KNOWLEDGE_FILE`: 知识文件路径（默认knowledge.json）
-
-## 作为库使用
-
-```python
-from local_knowledge import KnowledgeService, run_server, serve
-import asyncio
-
-# 使用知识服务
-knowledge_service = KnowledgeService("knowledge.json")
-knowledge_list = knowledge_service.query_all_knowledge()
-
-# 启动HTTP服务器
-run_server(port=8787, knowledge_file="knowledge.json")
-
-# 或者启动标准输入输出模式的服务
-asyncio.run(serve(knowledge_file="knowledge.json"))
-```
-
-## 工具和提示词说明
-
-### 工具列表
-
-本服务提供以下MCP工具：
-
-1. `list_knowledge` - 列出所有知识的描述信息
-2. `query_knowledge` - 查询指定索引的知识详情
-3. `add_knowledge` - 添加新的知识
-4. `update_knowledge` - 更新已有的知识
-
-### 提示词列表
-
-本服务提供以下MCP提示词：
-
-1. `list_knowledge` - 列出所有知识的描述信息
-2. `query_knowledge` - 查询指定索引的知识详情
-3. `add_knowledge` - 添加新的知识
-4. `update_knowledge` - 更新已有的知识
-
-## 调用示例
-
-### 列出所有知识描述
-
-```python
-# 工具调用
-response = await mcp_client.call_tool("list_knowledge", {})
-
-# 提示词调用
-prompt_result = await mcp_client.get_prompt("list_knowledge", {})
-```
-
-### 查询知识详情
-
-```python
-# 工具调用
-response = await mcp_client.call_tool("query_knowledge", {"indices": [0, 1, 2]})
-
-# 提示词调用
-prompt_result = await mcp_client.get_prompt("query_knowledge", {"indices": [0, 1, 2]})
-```
-
-### 添加知识
-
-```python
-# 工具调用
-response = await mcp_client.call_tool("add_knowledge", {
-    "description": "知识描述",
-    "detail": "知识内容",  # 可选
-    "detail_file": "/path/to/file.txt",  # 可选
-    "detail_script": "/path/to/script.py"  # 可选
-})
-
-# 提示词调用
-prompt_result = await mcp_client.get_prompt("add_knowledge", {
-    "description": "知识描述",
-    "detail": "知识内容",  # 可选
-    "detail_file": "/path/to/file.txt",  # 可选
-    "detail_script": "/path/to/script.py"  # 可选
-})
-```
-
-### 修改知识
-
-```python
-# 工具调用
-response = await mcp_client.call_tool("update_knowledge", {
-    "index": 0,
-    "description": "更新后的知识描述",
-    "detail": "更新后的知识内容",  # 可选
-    "detail_file": "/path/to/new_file.txt",  # 可选
-    "detail_script": "/path/to/new_script.py"  # 可选
-})
-
-# 提示词调用
-prompt_result = await mcp_client.get_prompt("update_knowledge", {
-    "index": 0,
-    "description": "更新后的知识描述",
-    "detail": "更新后的知识内容",  # 可选
-    "detail_file": "/path/to/new_file.txt",  # 可选
-    "detail_script": "/path/to/new_script.py"  # 可选
-})
-```
-
-## 知识脚本说明
-
-如果为知识提供了detail_script字段，系统会尝试加载以索引命名的Python脚本（如1.py, 2.py等），并执行其中的detail()函数获取知识内容。
-
-脚本示例：
-
-```python
-def detail():
-    # 可以在这里实现动态生成知识内容的逻辑
-    return "这是通过脚本动态生成的知识内容"
-```
-
-# local-knowledge
-
-本地知识管理服务，用于保存和向大模型提供本地知识。
-
-## 功能特点
-
-- 支持多种文档格式（PDF、Word、Excel等）的解析和知识提取
-- 提供本地知识库的检索和查询功能
-- 集成与大语言模型的接口，实现知识增强
-- 简单易用的命令行和API接口
-
-## 安装方法
+## 构建
 
 ```bash
-pip install local-knowledge
+# 构建安装包
+python setup.py sdist bdist_wheel
+```
+
+## 安装
+
+```bash
+# 安装MCP依赖
+pip install ./dist/local_knowledge-0.1.0-py3-none-any.whl
 ```
 
 ## 使用方法
 
-### 命令行使用
+### 配置
 
-```bash
-# 启动服务
-local-knowledge start
+典型的cline mcp配置
 
-# 导入文档
-local-knowledge import /path/to/document.pdf
-
-# 查询知识
-local-knowledge query "你的问题"
+```json
+"mcpServers": {
+  "local_knowledge": {
+    "command": "python",
+    "args": ["-m", "local_knowledge"]
+  }
+}
 ```
 
-### API使用
+### 文件结构
 
-```python
-from local_knowledge import KnowledgeBase
+知识库默认保存在工作目录的`.knowledge`文件中，以JSON格式存储。
 
-# 初始化知识库
-kb = KnowledgeBase()
+由于每个工作目录的知识库文件是不同的，所以对于不同的工作区，可以访问不同的本地知识库
 
-# 导入文档
-kb.import_document("/path/to/document.pdf")
+每条知识条目包含以下字段：
 
-# 查询知识
-results = kb.query("你的问题")
+- `index`: 知识的唯一序号
+- `description`: 知识的大体描述，用于让模型判断是否需要查询该条知识
+- `detail`: (可选) 知识的具体内容
+- `detail_file`: (可选) 知识内容的文件路径
+- `detail_script`: (可选) 获取知识内容的脚本路径
+
+### 字段协同工作机制
+
+在查询知识详情时，系统会按照以下逻辑处理这些字段：
+
+1. **description字段**：始终会被包含在返回结果中，作为知识的描述部分。
+
+2. **detail字段**：如果存在，系统直接将其内容添加到结果中。这适用于简短且静态的知识内容。
+
+3. **detail_file字段**：如果存在，系统会尝试读取指定文件的内容并添加到结果中。
+   - 可以使用相对路径（相对于知识库文件目录）或绝对路径
+   - 如果文件不存在或读取失败，会返回相应的错误信息
+
+4. **detail_script字段**：如果存在，系统会：
+   - 加载指定的Python脚本（可以是相对路径或绝对路径）
+   - 调用脚本中的`detail()`函数
+   - 将函数返回的内容添加到结果中
+   - 如果脚本执行失败，会返回相应的错误信息
+
+5. **优先级与组合**：这三种内容获取方式（detail、detail_file、detail_script）不互斥，可以同时存在。系统会按顺序处理并将所有获取到的内容组合成一个完整的知识详情返回。
+
+示例：一个知识条目可能同时包含基本说明（detail）、详细文档（detail_file）和动态生成的最新数据（detail_script）。
+
+```json
+{
+  "index": 1,
+  "description": "产品A的规格说明",
+  "detail": "产品A是一款高性能设备，支持...",
+  "detail_file": "docs/productA_details.md",
+  "detail_script": "scripts/get_latest_specs.py"
+}
 ```
 
-## 依赖项
+查询此条目时，返回的知识详情将包含：
+- "产品A是一款高性能设备，支持..."（来自detail字段）
+- productA_details.md文件的内容（来自detail_file字段）
+- get_latest_specs.py脚本执行detail()函数返回的内容（来自detail_script字段）
 
-- langchain - 用于向量检索和知识管理
-- fastapi - 提供API服务
-- pymupdf, python-docx, openpyxl - 文档解析
-- 其他依赖详见setup.py
 
-## 许可证
+## 提示词示例
+.clinerules
+``` 
+每次用户有任务需求时，为了了解解决用户问题有哪些注意事项和可以参考的知识点，需要率先在local_knowledge mcp服务中进行查找，发现是否有需要遵循的规则或者与用户问题相关的可以利用的知识。
+```
 
-MIT License
+
+## MCP接口
+
+### 工具
+
+#### `list_knowledge`
+
+列出所有知识的描述信息。
+
+**参数**:
+- `directory`: 知识文件所在的目录路径（绝对路径）
+
+**返回**:
+包含所有知识描述的列表。
+
+#### `query_knowledge`
+
+查询指定索引的知识详情。
+
+**参数**:
+- `directory`: 知识文件所在的目录路径（绝对路径）
+- `indices`: 要查询的知识序号列表
+
+**返回**:
+查询到的知识详情列表。
+
+#### `add_knowledge`
+
+添加新的知识。
+
+**参数**:
+- `directory`: 知识文件所在的目录路径（绝对路径）
+- `description`: 知识的描述
+- `detail`: (可选) 知识的具体内容
+- `detail_file`: (可选) 知识内容的文件路径
+- `detail_script`: (可选) 获取知识内容的脚本路径
+
+**返回**:
+添加结果和知识索引。
+
+#### `update_knowledge`
+
+更新已有知识。
+
+**参数**:
+- `directory`: 知识文件所在的目录路径（绝对路径）
+- `index`: 要更新的知识序号
+- `description`: (可选) 更新后的知识描述
+- `detail`: (可选) 更新后的知识内容
+- `detail_file`: (可选) 更新后的知识文件路径
+- `detail_script`: (可选) 更新后的知识脚本路径
+
+**返回**:
+更新结果。
+
