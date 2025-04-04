@@ -22,7 +22,7 @@ Local Knowledge是一个基于Model Context Protocol (MCP)的服务，用于管�
 
 ## 安装
 
-可以从[下载页面](https://github.com/RedSiamese/local-knowledge-mcp/releases/tag/exp)下载不同版本的wheel文件，使用pip进行安装：
+可以从[下载页面](https://github.com/RedSiamese/local-knowledge-mcp/releases/)下载不同版本的wheel文件，使用pip进行安装：
 
 ```bash
 pip install local_knowledge-0.1.0-py3-none-any.whl
